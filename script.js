@@ -12,15 +12,13 @@ document.getElementById('pluginForm').addEventListener('submit', function(event)
     event.preventDefault();
 
     const slug = event.target.slug.value;
+    const results = document.getElementById('results');
+    results.innerHTML = "";
+
     fetchData(slug)
         .then(data => {
-            const results = document.getElementById('results');
-
-            // Clear previous results
-            results.innerHTML = "";
-
-            // Populate the results
             results.innerHTML = results.innerHTML = `
+                <li><a href="https://wordpress.org/plugins/${slug}">${data.name}</a></li>
                 <li>Last Peak: ${data.normalizedDownloads.latestPeakValue.toLocaleString()}</li>
                 <li>Last Version Percentage: ${data.latestVersionPercentage}%</li>
                 <li>Estimated Active Installs: ${data.estimatedInstalls.toLocaleString()}</li>
@@ -29,13 +27,6 @@ document.getElementById('pluginForm').addEventListener('submit', function(event)
 
         })
         .catch(error => {
-            console.error("Error:", error.message);
+            results.innerHTML = `<li>Couldn't find <code>${slug}</code>.</li>`;
         });
-});
-
-document.getElementById('slug').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        document.getElementById('pluginForm').submit();
-    }
 });

@@ -13,16 +13,12 @@ const fetchData = async (endpoint) => {
 const handleRequest = async (request) => {
     const url = new URL(request.url);
     const { searchParams } = url;
-    const slug = searchParams.get('slug') || 'hello-dolly';
+    const slug = searchParams.get('slug').toLowerCase() || 'hello-dolly';
 
     try {
         const pluginData = await fetchData(`https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&slug=${slug}`);
         const downloadsData = await fetchData(`https://api.wordpress.org/stats/plugin/1.0/downloads.php?slug=${slug}`);
         const versionsData = await fetchData(`https://api.wordpress.org/stats/plugin/1.0/?slug=${slug}`);
-
-        const getReportedInstalls = (apiResult) => {
-            return apiResult['active_installs'];
-        }
 
         const getLatestVersionPercentage = (apiResult) => {
             // Extract version keys and sort them using localeCompare.
@@ -121,10 +117,12 @@ const handleRequest = async (request) => {
 
         const normalizedDownloads = getNormalizedDownloads(downloadsData);
         const latestVersionPercentage = getLatestVersionPercentage(versionsData);
-        const reportedInstalls = getReportedInstalls(pluginData);
+        const reportedInstalls = pluginData['active_installs'];
+        const name = pluginData['name'];
         const estimatedInstalls = Math.floor((normalizedDownloads.latestPeakValue + normalizedDownloads.sumAfterPeak) / (latestVersionPercentage / 100));
 
         return new Response(JSON.stringify({
+            name: name,
             normalizedDownloads: normalizedDownloads,
             latestVersionPercentage: latestVersionPercentage,
             reportedInstalls: reportedInstalls,
