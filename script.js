@@ -19,6 +19,7 @@ document.getElementById('pluginForm').addEventListener('submit', function(event)
         .then(data => {
             results.innerHTML = results.innerHTML = `
                 <li><a href="https://wordpress.org/plugins/${slug}" target="_blank">${data.name}</a></li>
+                <li>Last Updated: ${data.lastUpdated}</li>
                 <li>Last Peak: ${data.normalizedDownloads.latestPeakValue.toLocaleString()}</li>
                 <li>Last Version Percentage: ${data.latestVersionPercentage}%</li>
                 <li>Estimated Active Installs: ${data.estimatedInstalls.toLocaleString()}</li>

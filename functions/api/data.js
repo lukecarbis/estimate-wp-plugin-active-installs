@@ -119,10 +119,12 @@ const handleRequest = async (request) => {
         const latestVersionPercentage = getLatestVersionPercentage(versionsData);
         const reportedInstalls = pluginData['active_installs'];
         const name = pluginData['name'];
+        const lastUpdated = pluginData['last_updated'];
         const estimatedInstalls = Math.floor((normalizedDownloads.latestPeakValue + normalizedDownloads.sumAfterPeak) / (latestVersionPercentage / 100));
 
         return new Response(JSON.stringify({
             name: name,
+            lastUpdated: lastUpdated,
             normalizedDownloads: normalizedDownloads,
             latestVersionPercentage: latestVersionPercentage,
             reportedInstalls: reportedInstalls,
