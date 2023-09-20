@@ -8,16 +8,17 @@ const fetchData = (slug) => {
         });
 };
 
-document.getElementById('pluginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
 
-    const slug = event.target.slug.value;
-    const results = document.getElementById('results');
-    results.innerHTML = "";
+    if (slug) {
+        const results = document.getElementById('results');
+        results.innerHTML = "";
 
-    fetchData(slug)
-        .then(data => {
-            results.innerHTML = results.innerHTML = `
+        fetchData(slug)
+            .then(data => {
+                results.innerHTML = results.innerHTML = `
                 <li><a href="https://wordpress.org/plugins/${slug}" target="_blank">${data.name}</a></li>
                 <li>Last Updated: ${data.lastUpdated}</li>
                 <li>Last Peak: ${data.normalizedDownloads.latestPeakValue.toLocaleString()}</li>
@@ -27,8 +28,9 @@ document.getElementById('pluginForm').addEventListener('submit', function(event)
                 <li><strong>Estimated Active Installs: ${data.estimatedInstalls.toLocaleString()}</strong></li>
             `;
 
-        })
-        .catch(error => {
-            results.innerHTML = `<li>Couldn't find <code>${slug}</code>.</li>`;
-        });
+            })
+            .catch(error => {
+                results.innerHTML = `<li>Couldn't find <code>${slug}</code>.</li>`;
+            });
+    }
 });
