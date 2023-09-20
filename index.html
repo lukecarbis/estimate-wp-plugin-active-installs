@@ -28,6 +28,7 @@
             margin-bottom: 1.25rem;
             box-sizing: border-box;
             border: 1px solid #ccc;
+            font-size: 0.8rem;
         }
 
         button {
@@ -36,6 +37,7 @@
             background-color: #007BFF;
             color: #fff;
             cursor: pointer;
+            font-size: 0.8rem;
         }
 
         button:hover {
@@ -55,12 +57,17 @@
             margin: 1rem 1.25rem;
         }
 
+        h3 {
+            font-size: 1rem;
+            margin: 1rem 1.25rem;
+        }
+
         p {
             margin: 1rem 1.25rem;
         }
 
         #results {
-            margin: 0 1.25rem;
+            margin: 1.25rem;
             padding: 1.5rem 1.25rem;
             border: 1px solid #ccc;
         }
@@ -91,7 +98,7 @@
 </form>
 
 <div id="description">
-    <p>How does this work?</p>
+    <h3>How does this work?</h3>
     <p>We identify the most recent peak in daily downloads – that's the most recent update. Then we normalize this value based on average downloads around that date, and add downloads since that date. That gives us an idea of <em>total</em> installs running the latest version.</p>
     <p>Then we look up the <em>percentage</em> of installs that are running the current version. Using these the total and percentage values, we can guess at the total number of active installs.</p>
     <p>It's not perfect, but it's a good guess!</p>
