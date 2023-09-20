@@ -39,93 +39,29 @@ const handleRequest = async (request) => {
             return apiResult[latestVersion];
         }
 
-        const getNormalizedDownloads = (apiResult) => {
-            const data = {};
-            for (const key in apiResult) {
-                data[key] = parseInt(apiResult[key], 10);
-            }
-
-            // Calculate the rough average
+        const getLatestVersionDownloads = (apiResult, lastUpdated) => {
             let sum = 0;
-            for (const key in data) {
-                sum += data[key];
-            }
-            let roughAverage = sum / Object.keys(data).length;
 
-            // Exclude potential peaks and recalculate the average
-            let filteredValues = [];
-            for (const key in data) {
-                if (data[key] < roughAverage * 3) {
-                    filteredValues.push(data[key]);
-                }
-            }
-            let trueAverage = filteredValues.reduce((a, b) => a + b) / filteredValues.length;
-
-            // Identify peaks
-            const isPeak = (value) => value > trueAverage * 3;
-
-            // Normalize data
-            let normalizedData = { ...data };
-            let dates = Object.keys(data);
-            let latestPeakValue = 0;
-            let peakValueDate = '';
-            let mostRecentPeakIndex = -1;
-
-            for (let i = 1; i < dates.length - 1; i++) {
-                if (isPeak(data[dates[i]]) && isPeak(data[dates[i + 1]])) {
-                    let surroundingValues = [];
-
-                    for (let j = i - 1; j >= 0 && surroundingValues.length < 2; j--) {
-                        if (!isPeak(data[dates[j]])) {
-                            surroundingValues.push(data[dates[j]]);
-                        }
-                    }
-
-                    for (let j = i + 2; j < dates.length && surroundingValues.length < 4; j++) {
-                        if (!isPeak(data[dates[j]])) {
-                            surroundingValues.push(data[dates[j]]);
-                        }
-                    }
-
-                    surroundingValues.sort((a, b) => a - b);
-                    let median = surroundingValues.length % 2 === 0 ?
-                        Math.floor((surroundingValues[surroundingValues.length / 2 - 1] + surroundingValues[surroundingValues.length / 2]) / 2 ) :
-                        surroundingValues[Math.floor(surroundingValues.length / 2)];
-
-                    latestPeakValue = data[dates[i]] + data[dates[i+1]] - 2 * median;
-                    peakValueDate = dates[i];
-                    mostRecentPeakIndex = i;
-
-                    normalizedData[dates[i]] = median;
-                    normalizedData[dates[i + 1]] = median;
+            for (let date in apiResult) {
+                if (date >= lastUpdated) {
+                    sum += parseInt(apiResult[date], 10);
                 }
             }
 
-            let sumAfterPeak = 0;
-            for (let i = mostRecentPeakIndex + 2; i < dates.length; i++) {
-                sumAfterPeak += normalizedData[dates[i]];
-            }
-
-            return {
-                "downloads": apiResult,
-                peakValueDate,
-                latestPeakValue,
-                normalizedData,
-                sumAfterPeak
-            };
+            return sum;
         }
 
-        const normalizedDownloads = getNormalizedDownloads(downloadsData);
-        const latestVersionPercentage = getLatestVersionPercentage(versionsData);
         const reportedInstalls = pluginData['active_installs'];
         const name = pluginData['name'];
-        const lastUpdated = pluginData['last_updated'];
-        const estimatedInstalls = Math.floor((normalizedDownloads.latestPeakValue + normalizedDownloads.sumAfterPeak) / (latestVersionPercentage / 100));
+        const lastUpdated = pluginData['last_updated'].split(' ')[0];
+        const latestVersionDownloads = getLatestVersionDownloads(downloadsData, lastUpdated);
+        const latestVersionPercentage = getLatestVersionPercentage(versionsData);
+        const estimatedInstalls = Math.floor(latestVersionDownloads / (latestVersionPercentage / 100));
 
         return new Response(JSON.stringify({
             name: name,
             lastUpdated: lastUpdated,
-            normalizedDownloads: normalizedDownloads,
+            latestVersionDownloads: latestVersionDownloads,
             latestVersionPercentage: latestVersionPercentage,
             reportedInstalls: reportedInstalls,
             estimatedInstalls: estimatedInstalls,

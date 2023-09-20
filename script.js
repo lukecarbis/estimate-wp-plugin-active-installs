@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2><a href="https://wordpress.org/plugins/${slug}" target="_blank">${data.name}</a></h2>
                 <ul>
                     <li>Last Updated: ${data.lastUpdated}</li>
-                    <li>Last Peak: ${data.normalizedDownloads.latestPeakValue.toLocaleString()}</li>
-                    <li>Installs Since Last Peak: ${data.normalizedDownloads.sumAfterPeak.toLocaleString()}</li>
+                    <li>Latest Version Installs: ${data.latestVersionDownloads.toLocaleString()}</li>
                     <li>Last Version Percentage: ${data.latestVersionPercentage}%</li>
                     <li>Reported Active Installs: ${data.reportedInstalls.toLocaleString()}+</li>
                     <li><strong>Estimated Active Installs: ${data.estimatedInstalls.toLocaleString()}</strong></li>
