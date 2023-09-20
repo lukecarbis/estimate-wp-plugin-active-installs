@@ -111,6 +111,7 @@ const handleRequest = async (request) => {
             }
 
             return {
+                downloads: apiResult,
                 peakValueDate,
                 latestPeakValue,
                 normalizedData,
@@ -121,7 +122,7 @@ const handleRequest = async (request) => {
         const normalizedDownloads = getNormalizedDownloads(downloadsData);
         const latestVersionPercentage = getLatestVersionPercentage(versionsData);
         const reportedInstalls = getReportedInstalls(pluginData);
-        const estimatedInstalls = Math.floor(normalizedDownloads.latestPeakValue / (latestVersionPercentage / 100)) + normalizedDownloads.sumAfterPeak;
+        const estimatedInstalls = Math.floor((normalizedDownloads.latestPeakValue + normalizedDownloads.sumAfterPeak) / (latestVersionPercentage / 100));
 
         return new Response(JSON.stringify({
             normalizedDownloads: normalizedDownloads,

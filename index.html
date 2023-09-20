@@ -19,7 +19,7 @@
 
         label {
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.8rem;
         }
 
         input {
@@ -43,12 +43,16 @@
         }
 
         #results {
-            margin-left: 1.25rem;
+            margin: 0 1.25rem;
             padding: 1.25rem;
         }
 
         #results li {
             margin-bottom: 0.75rem;
+        }
+
+        #description {
+            font-size: 0.75rem;
         }
     </style>
 </head>
@@ -56,12 +60,19 @@
 <form id="pluginForm">
     <label for="slug">Plugin Slug:</label>
     <input type="text" id="slug" name="slug" placeholder="gutenberg" required>
-    <button type="submit">Submit</button>
+    <input type="submit" value="Submit">
 </form>
 
 <ul id="results">
     <!-- Results will be populated here -->
 </ul>
+
+<div id="description">
+    <p>How does this work?</p>
+    <p>We identify the most recent peak in daily downloads – that's the most recent update. Then we normalize this value based on average downloads around that date, and add downloads since that date. That gives us an idea of <em>total</em> installs running the latest version.</p>
+    <p>Then we look up the <em>percentage</em> of installs that are running the current version. Using these the total and percentage values, we can guess at the total number of active installs.</p>
+    <p>It's not perfect, but it's a good guess!</p>
+</div>
 
 <script src="script.js"></script>
 </body>
