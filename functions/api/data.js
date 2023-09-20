@@ -25,8 +25,16 @@ const handleRequest = async (request) => {
         }
 
         const getLatestVersionPercentage = (apiResult) => {
-            // Extract version keys and sort them.
-            let versions = Object.keys(apiResult).filter(v => v !== 'other').sort((a, b) => parseFloat(a) - parseFloat(b));
+            // Extract version keys and sort them using localeCompare.
+            let versions = Object.keys(apiResult)
+                .filter(v => v !== 'other')
+                .sort(
+                    (a, b) => a.localeCompare(
+                        b,
+                        undefined,
+                        { numeric: true, sensitivity: 'base' }
+                    )
+                );
 
             // Get the latest version number.
             let latestVersion = versions[versions.length - 1];
