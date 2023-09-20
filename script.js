@@ -20,11 +20,12 @@ document.getElementById('pluginForm').addEventListener('submit', function(event)
             results.innerHTML = "";
 
             // Populate the results
-            results.innerHTML = `
-                <li>Last Peak: ${data.latestPeakDownloads}</li>
-                <li>Last Version Percentage: ${data.latestVersionPercentage}</li>
-                <li>Estimated Total Users: ${data.estimatedTotalUsers}</li>
+            results.innerHTML = results.innerHTML = `
+                <li>Last Peak: ${data.latestPeakDownloads.toLocaleString()}</li>
+                <li>Last Version Percentage: ${data.latestVersionPercentage}%</li>
+                <li>Estimated Total Users: ${data.estimatedTotalUsers.toLocaleString()}</li>
             `;
+
         })
         .catch(error => {
             console.error("Error:", error.message);
