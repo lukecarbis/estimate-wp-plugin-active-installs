@@ -1,6 +1,6 @@
-addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request))
-})
+export function onRequest(context) {
+    return new handleRequest(context.request);
+}
 
 const fetchData = async (endpoint) => {
     const response = await fetch(endpoint);
