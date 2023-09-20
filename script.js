@@ -32,3 +32,10 @@ document.getElementById('pluginForm').addEventListener('submit', function(event)
             console.error("Error:", error.message);
         });
 });
+
+document.getElementById('slug').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('pluginForm').submit();
+    }
+});

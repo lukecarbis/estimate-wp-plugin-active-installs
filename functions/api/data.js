@@ -111,7 +111,7 @@ const handleRequest = async (request) => {
             }
 
             return {
-                downloads: apiResult,
+                "downloads": apiResult,
                 peakValueDate,
                 latestPeakValue,
                 normalizedData,
