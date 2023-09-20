@@ -1,5 +1,5 @@
 export function onRequest(context) {
-    return new handleRequest(context.request);
+    return handleRequest(context.request);
 }
 
 const fetchData = async (endpoint) => {
