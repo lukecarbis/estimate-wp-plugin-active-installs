@@ -65,7 +65,7 @@ const handleRequest = async (request) => {
             let dates = Object.keys(data);
             let latestPeakValue = 0;
             let peakValueDate = '';
-            let sumAfterPeak = 0;
+            let mostRecentPeakIndex = -1;
 
             for (let i = 1; i < dates.length - 1; i++) {
                 if (isPeak(data[dates[i]]) && isPeak(data[dates[i + 1]])) {
@@ -90,16 +90,16 @@ const handleRequest = async (request) => {
 
                     latestPeakValue = data[dates[i]] + data[dates[i+1]] - 2 * median;
                     peakValueDate = dates[i];
-
-                    for (let i = dates.indexOf(peakValueDate) + 2; i < dates.length; i++) {
-                        sumAfterPeak += normalizedData[dates[i]];
-                    }
+                    mostRecentPeakIndex = i;
 
                     normalizedData[dates[i]] = median;
                     normalizedData[dates[i + 1]] = median;
-
-                    break;
                 }
+            }
+
+            let sumAfterPeak = 0;
+            for (let i = mostRecentPeakIndex + 2; i < dates.length; i++) {
+                sumAfterPeak += normalizedData[dates[i]];
             }
 
             return {
