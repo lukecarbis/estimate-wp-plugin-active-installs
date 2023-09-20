@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchData(slug)
             .then(data => {
                 results.innerHTML = results.innerHTML = `
+                <h2><a href="https://wordpress.org/plugins/${slug}" target="_blank">${data.name}</a></h2>
                 <ul>
-                    <li><a href="https://wordpress.org/plugins/${slug}" target="_blank">${data.name}</a></li>
                     <li>Last Updated: ${data.lastUpdated}</li>
                     <li>Last Peak: ${data.normalizedDownloads.latestPeakValue.toLocaleString()}</li>
                     <li>Installs Since Last Peak: ${data.normalizedDownloads.sumAfterPeak.toLocaleString()}</li>
