@@ -16,8 +16,13 @@ const handleRequest = async (request) => {
     const slug = searchParams.get('slug') || 'hello-dolly';
 
     try {
+        const pluginData = await fetchData(`https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&slug=${slug}`);
         const downloadsData = await fetchData(`https://api.wordpress.org/stats/plugin/1.0/downloads.php?slug=${slug}`);
         const versionsData = await fetchData(`https://api.wordpress.org/stats/plugin/1.0/?slug=${slug}`);
+
+        const getReportedInstalls = (apiResult) => {
+            return apiResult['active_installs'];
+        }
 
         const getLatestVersionPercentage = (apiResult) => {
             // Extract version keys and sort them.
@@ -30,7 +35,7 @@ const handleRequest = async (request) => {
             return apiResult[latestVersion];
         }
 
-        const getLatestPeakDownloads = (apiResult) => {
+        const getNormalizedDownloads = (apiResult) => {
             const data = {};
             for (const key in apiResult) {
                 data[key] = parseInt(apiResult[key], 10);
@@ -59,6 +64,8 @@ const handleRequest = async (request) => {
             let normalizedData = { ...data };
             let dates = Object.keys(data);
             let latestPeakValue = 0;
+            let peakValueDate = '';
+            let sumAfterPeak = 0;
 
             for (let i = 1; i < dates.length - 1; i++) {
                 if (isPeak(data[dates[i]]) && isPeak(data[dates[i + 1]])) {
@@ -82,23 +89,37 @@ const handleRequest = async (request) => {
                         surroundingValues[Math.floor(surroundingValues.length / 2)];
 
                     latestPeakValue = data[dates[i]] + data[dates[i+1]] - 2 * median;
+                    peakValueDate = dates[i];
+
+                    for (let i = dates.indexOf(peakValueDate) + 2; i < dates.length; i++) {
+                        sumAfterPeak += normalizedData[dates[i]];
+                    }
 
                     normalizedData[dates[i]] = median;
                     normalizedData[dates[i + 1]] = median;
+
+                    break;
                 }
             }
 
-            return latestPeakValue;
+            return {
+                peakValueDate,
+                latestPeakValue,
+                normalizedData,
+                sumAfterPeak
+            };
         }
 
-        const latestPeakDownloads = getLatestPeakDownloads(downloadsData);
+        const normalizedDownloads = getNormalizedDownloads(downloadsData);
         const latestVersionPercentage = getLatestVersionPercentage(versionsData);
-        const estimatedTotalUsers = Math.floor(latestPeakDownloads / (latestVersionPercentage / 100));
+        const reportedInstalls = getReportedInstalls(pluginData);
+        const estimatedInstalls = Math.floor(normalizedDownloads.latestPeakValue / (latestVersionPercentage / 100)) + normalizedDownloads.sumAfterPeak;
 
         return new Response(JSON.stringify({
-            latestPeakDownloads: latestPeakDownloads,
+            normalizedDownloads: normalizedDownloads,
             latestVersionPercentage: latestVersionPercentage,
-            estimatedTotalUsers: estimatedTotalUsers,
+            reportedInstalls: reportedInstalls,
+            estimatedInstalls: estimatedInstalls,
         }), {
             headers: { 'Content-Type': 'application/json' },
         });
